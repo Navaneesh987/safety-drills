@@ -1,4 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+
 import {
   getFirestore,
   doc,
@@ -32,7 +33,6 @@ function getSessionId() {
 
 function getLocation() {
   return new Promise((resolve, reject) => {
-
     navigator.geolocation.getCurrentPosition(
       resolve,
       reject,
@@ -42,7 +42,6 @@ function getLocation() {
         maximumAge: 0
       }
     );
-
   });
 }
 
@@ -58,7 +57,7 @@ allowBtn.addEventListener("click", async () => {
 
   allowBtn.disabled = true;
 
-  showStatus("Getting your location…");
+  showStatus("Getting your location...");
 
   try {
 
@@ -68,14 +67,22 @@ allowBtn.addEventListener("click", async () => {
     const longitude = position.coords.longitude;
     const accuracy = position.coords.accuracy;
 
-    const participantId = getSessionId();
+    if (
+      !Number.isFinite(latitude) ||
+      !Number.isFinite(longitude) ||
+      !Number.isFinite(accuracy)
+    ) {
+      throw new Error("Invalid location data received.");
+    }
 
-    showStatus("Location found. Recording it…");
+    showStatus("Location found. Recording it...");
+
+    const sessionId = getSessionId();
 
     await setDoc(
-      doc(db, "locations", participantId),
+      doc(db, "locations", sessionId),
       {
-        sessionId: participantId,
+        sessionId: sessionId,
         latitude: latitude,
         longitude: longitude,
         accuracy: accuracy,
@@ -93,6 +100,8 @@ allowBtn.addEventListener("click", async () => {
   } catch (error) {
 
     console.error("Location error:", error);
+
+    allowBtn.disabled = false;
 
     if (error.code === 1) {
 
@@ -115,15 +124,22 @@ allowBtn.addEventListener("click", async () => {
         "error"
       );
 
+    } else if (
+      error.message &&
+      error.message.includes("permission-denied")
+    ) {
+
+      showStatus(
+        "Database access was denied. Please check the Firebase Firestore rules.",
+        "error"
+      );
+
     } else {
 
       showStatus(
         "Something went wrong while recording your location. Please try again.",
         "error"
       );
-
     }
-
-    allowBtn.disabled = false;
   }
 });
