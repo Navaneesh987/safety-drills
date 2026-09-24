@@ -4,7 +4,7 @@ import {
   getFirestore,
   doc,
   setDoc,
-  serverTimestamp
+  Timestamp
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
 import { firebaseConfig } from "./firebase-config.js";
@@ -86,7 +86,7 @@ allowBtn.addEventListener("click", async () => {
         latitude: latitude,
         longitude: longitude,
         accuracy: accuracy,
-        timestamp: serverTimestamp()
+        timestamp: Timestamp.now()
       }
     );
 
@@ -121,16 +121,6 @@ allowBtn.addEventListener("click", async () => {
 
       showStatus(
         "Location request timed out. Please make sure GPS/location is ON and try again.",
-        "error"
-      );
-
-    } else if (
-      error.message &&
-      error.message.includes("permission-denied")
-    ) {
-
-      showStatus(
-        "Database access was denied. Please check the Firebase Firestore rules.",
         "error"
       );
 
