@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Safety Check</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="card">
+    <div class="badge">SAFETY DRILL</div>
+    <h1>Safety Check</h1>
+    <p class="intro">
+      This is an authorized safety drill. Your location will be recorded only
+      after you choose to allow location access.
+    </p>
+
+    <div class="notice">
+      <strong>Privacy:</strong> We collect only a random session ID, GPS
+      coordinates, accuracy and the recording time. No name, phone number or
+      email is collected by this page.
+    </div>
+
+    <button id="allowBtn">Allow Access</button>
+    <p id="status" class="status" aria-live="polite"></p>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

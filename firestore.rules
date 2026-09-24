@@ -1,0 +1,37 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Replace this with the exact administrator email you created
+    // in Firebase Authentication.
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == "REPLACE_WITH_YOUR_ADMIN_EMAIL";
+    }
+
+    match /locations/{participantId} {
+      // Participants may submit only their own generated session record.
+      allow create: if request.auth == null
+        && request.resource.data.keys().hasOnly([
+          "participantId", "latitude", "longitude", "accuracy", "timestamp"
+        ])
+        && request.resource.data.participantId == participantId
+        && participantId.size() >= 20
+        && participantId.size() <= 50
+        && request.resource.data.latitude is number
+        && request.resource.data.longitude is number
+        && request.resource.data.accuracy is number
+        && request.resource.data.latitude >= -90
+        && request.resource.data.latitude <= 90
+        && request.resource.data.longitude >= -180
+        && request.resource.data.longitude <= 180
+        && request.resource.data.accuracy >= 0
+        && request.resource.data.accuracy <= 100000
+        && request.resource.data.timestamp == request.time;
+
+      // Participants cannot read, update, or delete location records.
+      allow read, update, delete: if isAdmin();
+    }
+  }
+}

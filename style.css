@@ -1,0 +1,53 @@
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: #f3f6fb;
+  color: #18212f;
+}
+.card {
+  width: min(100%, 520px);
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 12px 35px rgba(0,0,0,.10);
+}
+.badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #e9f2ff;
+  color: #1769aa;
+}
+h1 { margin: 16px 0 10px; font-size: 34px; }
+.intro { line-height: 1.6; color: #4b5563; }
+.notice {
+  margin: 22px 0;
+  padding: 14px;
+  border-left: 4px solid #1769aa;
+  background: #f5f9ff;
+  color: #374151;
+  line-height: 1.5;
+}
+button {
+  width: 100%;
+  border: 0;
+  border-radius: 12px;
+  padding: 15px 18px;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  background: #1769aa;
+  color: white;
+}
+button:disabled { opacity: .6; cursor: wait; }
+.status { min-height: 24px; margin-top: 18px; line-height: 1.5; }
+.success { color: #137333; }
+.error { color: #b3261e; }

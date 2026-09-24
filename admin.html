@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Safety Drill Admin</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { display:block; padding:20px; }
+    .admin-wrap { max-width:1200px; margin:auto; }
+    .topbar { display:flex; gap:12px; justify-content:space-between; align-items:center; flex-wrap:wrap; }
+    .actions { display:flex; gap:10px; }
+    .smallbtn { width:auto; padding:10px 14px; }
+    #login { max-width:430px; margin:50px auto; }
+    input { width:100%; padding:12px; margin:7px 0 14px; border:1px solid #d1d5db; border-radius:10px; }
+    #dashboard { display:none; }
+    #map { height:500px; border-radius:16px; margin:20px 0; }
+    .table-wrap { overflow:auto; background:white; border-radius:16px; }
+    table { width:100%; border-collapse:collapse; }
+    th, td { padding:12px; border-bottom:1px solid #eee; text-align:left; white-space:nowrap; }
+  </style>
+</head>
+<body>
+<div class="admin-wrap">
+  <section id="login" class="card">
+    <div class="badge">ADMINISTRATOR</div>
+    <h1>Safety Drill Dashboard</h1>
+    <p>Sign in with the coordinator account created in Firebase Authentication.</p>
+    <label>Email</label>
+    <input id="email" type="email" autocomplete="username">
+    <label>Password</label>
+    <input id="password" type="password" autocomplete="current-password">
+    <button id="loginBtn">Sign in</button>
+    <p id="loginStatus" class="status"></p>
+  </section>
+
+  <section id="dashboard">
+    <div class="topbar">
+      <div>
+        <div class="badge">PRIVATE DASHBOARD</div>
+        <h1>Safety Drill Locations</h1>
+        <p id="count"></p>
+      </div>
+      <div class="actions">
+        <button class="smallbtn" id="refreshBtn">Refresh</button>
+        <button class="smallbtn" id="logoutBtn">Sign out</button>
+      </div>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Participant ID</th><th>Latitude</th><th>Longitude</th><th>Accuracy</th><th>Time</th></tr>
+        </thead>
+        <tbody id="records"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script type="module" src="admin.js"></script>
+</body>
+</html>
