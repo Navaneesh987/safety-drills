@@ -37,9 +37,9 @@ function getLocation() {
       resolve,
       reject,
       {
-        enableHighAccuracy: true,
-        timeout: 60000,
-        maximumAge: 0
+        enableHighAccuracy: false,
+        timeout: 15000,
+        maximumAge: 30000
       }
     );
   });
@@ -49,14 +49,13 @@ allowBtn.addEventListener("click", async () => {
 
   if (!navigator.geolocation) {
     showStatus(
-      "Location services are not supported by this browser.",
+      "Location is not supported by this browser.",
       "error"
     );
     return;
   }
 
   allowBtn.disabled = true;
-
   showStatus("Getting your location...");
 
   try {
@@ -66,14 +65,6 @@ allowBtn.addEventListener("click", async () => {
     const latitude = position.coords.latitude;
     const longitude = position.coords.longitude;
     const accuracy = position.coords.accuracy;
-
-    if (
-      !Number.isFinite(latitude) ||
-      !Number.isFinite(longitude) ||
-      !Number.isFinite(accuracy)
-    ) {
-      throw new Error("Invalid location data received.");
-    }
 
     showStatus("Location found. Recording it...");
 
@@ -104,30 +95,23 @@ allowBtn.addEventListener("click", async () => {
     allowBtn.disabled = false;
 
     if (error.code === 1) {
-
       showStatus(
-        "Location permission was denied. Please allow location access and try again.",
+        "Location permission was denied. Please allow location access.",
         "error"
       );
-
     } else if (error.code === 2) {
-
       showStatus(
-        "Your location is currently unavailable. Please check GPS/location services and try again.",
+        "Location is unavailable. Turn ON phone Location and try again.",
         "error"
       );
-
     } else if (error.code === 3) {
-
       showStatus(
-        "Location request timed out. Please make sure GPS/location is ON and try again.",
+        "Location timed out. Please turn ON Location and try again.",
         "error"
       );
-
     } else {
-
       showStatus(
-        "Something went wrong while recording your location. Please try again.",
+        "Could not get your location. Please try again.",
         "error"
       );
     }
