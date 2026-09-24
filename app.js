@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 
 import {
-  getFirestore,
+  initializeFirestore,
   doc,
   setDoc,
   Timestamp
@@ -10,7 +10,11 @@ import {
 import { firebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+
+// Helps Firestore work on networks where its normal connection is blocked.
+const db = initializeFirestore(app, {
+  experimentalAutoDetectLongPolling: true
+});
 
 const allowBtn = document.getElementById("allowBtn");
 const statusEl = document.getElementById("status");
@@ -56,9 +60,10 @@ allowBtn.addEventListener("click", async () => {
   }
 
   allowBtn.disabled = true;
-  showStatus("Getting your location...");
 
   try {
+
+    showStatus("Getting your location...");
 
     const position = await getLocation();
 
@@ -70,7 +75,7 @@ allowBtn.addEventListener("click", async () => {
 
     const sessionId = getSessionId();
 
-    await setDoc(
+    const saveLocation = setDoc(
       doc(db, "locations", sessionId),
       {
         sessionId: sessionId,
@@ -81,6 +86,14 @@ allowBtn.addEventListener("click", async () => {
       }
     );
 
+    const timeout = new Promise((_, reject) => {
+      setTimeout(() => {
+        reject(new Error("FIRESTORE_TIMEOUT"));
+      }, 15000);
+    });
+
+    await Promise.race([saveLocation, timeout]);
+
     showStatus(
       "Location successfully recorded.",
       "success"
@@ -90,28 +103,42 @@ allowBtn.addEventListener("click", async () => {
 
   } catch (error) {
 
-    console.error("Location error:", error);
+    console.error("SAVE/LOCATION ERROR:", error);
 
     allowBtn.disabled = false;
 
-    if (error.code === 1) {
+    if (error.message === "FIRESTORE_TIMEOUT") {
+
+      showStatus(
+        "Could not connect to the database. Please try again.",
+        "error"
+      );
+
+    } else if (error.code === 1) {
+
       showStatus(
         "Location permission was denied. Please allow location access.",
         "error"
       );
+
     } else if (error.code === 2) {
+
       showStatus(
-        "Location is unavailable. Turn ON phone Location and try again.",
+        "Location is unavailable. Please check GPS/location services.",
         "error"
       );
+
     } else if (error.code === 3) {
+
       showStatus(
-        "Location timed out. Please turn ON Location and try again.",
+        "Location timed out. Please try again.",
         "error"
       );
+
     } else {
+
       showStatus(
-        "Could not get your location. Please try again.",
+        "Could not record your location. Please try again.",
         "error"
       );
     }
